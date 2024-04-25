@@ -35,7 +35,7 @@ jobs:
             --dir build \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
             --auth ${{ secrets.NETLIFY_API_TOKEN }} \
-            --json output.json
+            --json > output.json
 
       - name: Generate Preview URL
         id: url_preview
