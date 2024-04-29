@@ -5,12 +5,6 @@ version: 2.1
 #orbs:
 #  node: circleci/node@5.2.0
 
-# Filters to ensure this only runs on tags for a release
-prod_release_filters: &prod_release_filters
-  filters:
-    tags:
-      only: /^v[0-9]+(\.[0-9]+)*$/
-
 jobs:
   build:
     docker:
@@ -48,30 +42,44 @@ jobs:
           command: |
             ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
             
-            sudo apt-get install jq
-            NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' ./output.json) 
-            echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+#            sudo apt-get install jq
+#            NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' ./output.json)
+#            echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+#
+#      - run:
+#          name: Comment Deploy URL
+#          command: |
+#            sudo apt-get install jq
+#
+#            pr_response=$(curl --location --request GET "https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls?head=$CIRCLE_PROJECT_USERNAME:$CIRCLE_BRANCH&state=open" \
+#            -u $GH_USER:$GH_TOKEN)
+#
+#            if [ $(echo $pr_response | jq length) -eq 0 ]; then
+#              echo "No PR found to update"
+#            else
+#              pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
+#            fi
+#
+#            curl --location --request POST "$pr_comment_url" \
+#            -u $GH_USER:$GH_TOKEN \
+#            --header 'Content-Type: application/json' \
+#            --data-raw '{
+#             "body": $NETLIFY_PREVIEW_URL
+#            }'
 
+  deploy_prod:
+    docker:
+      - image: cimg/node:18.17.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          key: app-build-cache-{{ .Branch }}
       - run:
-          name: Comment Deploy URL
+          name: Deploy to Netlify
           command: |
-            sudo apt-get install jq
-
-            pr_response=$(curl --location --request GET "https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls?head=$CIRCLE_PROJECT_USERNAME:$CIRCLE_BRANCH&state=open" \
-            -u $GH_USER:$GH_TOKEN)
-
-            if [ $(echo $pr_response | jq length) -eq 0 ]; then
-              echo "No PR found to update"
-            else
-              pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
-            fi
-
-            curl --location --request POST "$pr_comment_url" \
-            -u $GH_USER:$GH_TOKEN \
-            --header 'Content-Type: application/json' \
-            --data-raw '{
-             "body": $NETLIFY_PREVIEW_URL
-            }'
+            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --prod
 
 workflows:
   version: 2
@@ -81,3 +89,16 @@ workflows:
       - deploy:
           requires:
             - build
+
+  build-deploy-prod:
+    jobs:
+      - build
+      - deploy_prod:
+          requires:
+            - build
+        filters:
+          tags:
+            only:
+              - /^v.*/
+            branches:
+              ignore: /.*/
