@@ -2,6 +2,9 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+orbs:
+  node: circleci/node@5.2.0
+
 # Filters to ensure this only runs on tags for a release
 prod_release_filters: &prod_release_filters
   filters:
@@ -10,8 +13,8 @@ prod_release_filters: &prod_release_filters
 
 jobs:
   build:
-    executor:
-      name: node/default
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - run:
