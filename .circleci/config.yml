@@ -2,9 +2,6 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-orbs:
-  node: circleci/node@5.2.0
-
 # Filters to ensure this only runs on tags for a release
 prod_release_filters: &prod_release_filters
   filters:
@@ -12,19 +9,19 @@ prod_release_filters: &prod_release_filters
       only: /^v[0-9]+(\.[0-9]+)*$/
 
 jobs:
-  install-node:
-    executor: node/default
-    steps:
-      - run: sudo npm install -g npm@latest
-
   build:
     executor: node/default
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install Netlify CLI
-          command: npm install netlify-cli@17.10.1 -g
-      - node/install-packages
+          name: Install Dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
       - run:
           name: Build
           command: npm run build
@@ -36,9 +33,4 @@ jobs:
       - build
       - run:
           name: Deploy to Netlify
-          command: |
-            netlify deploy \
-            --dir build \
-            --site $NETLIFY_SITE_ID \
-            --auth $NETLIFY_API_TOKEN \
-#            --prod
+          command: ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_ACCESS_TOKEN --dir=build
