@@ -45,10 +45,10 @@ jobs:
           key: app-build-cache-{{ .Branch }}
       - run:
           name: Deploy to Netlify
-          command: ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
-      -  run:
-          name: Generate Preview URL
-          command: NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' output.json) && echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+          command: |
+            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json \
+            NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' output.json) && echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+
       - run:
           name: Comment Deploy URL
           command: |
