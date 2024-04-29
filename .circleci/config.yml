@@ -2,6 +2,9 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
+orbs:
+  node: circleci/node@5.2.0
+
 # Filters to ensure this only runs on tags for a release
 prod_release_filters: &prod_release_filters
   filters:
@@ -34,3 +37,10 @@ jobs:
       - run:
           name: Deploy to Netlify
           command: ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_ACCESS_TOKEN --dir=build
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy
