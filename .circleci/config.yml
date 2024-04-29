@@ -38,6 +38,7 @@ jobs:
     docker:
       - image: cimg/node:18.17.0
     steps:
+      - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
