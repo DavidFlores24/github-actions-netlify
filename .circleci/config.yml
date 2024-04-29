@@ -5,6 +5,14 @@ version: 2.1
 #orbs:
 #  node: circleci/node@5.2.0
 
+prod_filters: &prod_filters
+  filters:
+    tags:
+      only:
+        - /^v.*/
+    branches:
+      ignore: /.*/
+
 jobs:
   build:
     docker:
@@ -92,13 +100,10 @@ workflows:
 
   build-deploy-prod:
     jobs:
-      - build
+      - build:
+          <<: *prod_filters
+
       - deploy_prod:
           requires:
             - build
-          filters:
-            tags:
-              only:
-                - /^v.*/
-            branches:
-              ignore: /.*/
+          <<: *prod_filters
