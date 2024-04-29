@@ -2,8 +2,8 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-orbs:
-  node: circleci/node@5.2.0
+#orbs:
+#  node: circleci/node@5.2.0
 
 # Filters to ensure this only runs on tags for a release
 prod_release_filters: &prod_release_filters
@@ -13,7 +13,8 @@ prod_release_filters: &prod_release_filters
 
 jobs:
   build:
-    executor: node/default
+    docker:
+      - image: cimg/node:18.16.0
     steps:
       - checkout
       - restore_cache:
@@ -30,14 +31,12 @@ jobs:
           command: npm run build
 
   deploy:
-    executor:
-      name: node/default
+    docker:
+      - image: cimg/node:18.16.0
     steps:
-      - build
       - run:
           name: Deploy to Netlify
           command: ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_ACCESS_TOKEN --dir=build
-
 workflows:
   version: 2
   build-deploy:
