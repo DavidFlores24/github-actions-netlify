@@ -12,17 +12,19 @@ prod_release_filters: &prod_release_filters
       only: /^v[0-9]+(\.[0-9]+)*$/
 
 jobs:
+  install-node:
+    executor: node/default
+    steps:
+      - run: sudo npm install -g npm@latest
+
   build:
-    docker:
-      - image: cimg/base:stable
+    executor: node/default
     steps:
       - checkout
       - run:
           name: Install Netlify CLI
           command: npm install netlify-cli@17.10.1 -g
-      - run:
-          name: Install Dependencies
-          command: npm i
+      - node/install-packages
       - run:
           name: Build
           command: npm run build
