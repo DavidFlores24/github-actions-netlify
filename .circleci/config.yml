@@ -29,11 +29,19 @@ jobs:
       - run:
           name: Build
           command: npm run build
+      - save_cache:
+          key: app-build-cache-{{ .Branch }}
+          paths:
+            - ./build
 
   deploy:
     docker:
       - image: cimg/node:18.17.0
     steps:
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          key: app-build-cache-{{ .Branch }}
       - run:
           name: Deploy to Netlify
           command: ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_ACCESS_TOKEN --dir=build
