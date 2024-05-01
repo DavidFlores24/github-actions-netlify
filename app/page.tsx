@@ -59,7 +59,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2>
-            Learn <span>-&gt;</span>
+            Learn More things!<span>-&gt;</span>
           </h2>
           <p>Learn about Next.js!</p>
         </a>
