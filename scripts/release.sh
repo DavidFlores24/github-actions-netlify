@@ -16,13 +16,13 @@ npm run build
 npm run dry_release
 
 echo -e "\n👀 Do the above changes look correct? (y/n)"
-read -tr 60 key
+read -r -t 60 key
 if [[ $key == 'y' || $key == 'Y' ]]; then
   npm run release
 else
   echo -e "\n No release is being created"
-  return 1
+  exit 1
 fi
 
 git push --follow-tags origin main
-return 0
+exit 0
