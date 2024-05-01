@@ -1,13 +1,14 @@
 {
   "name": "github-actions-netlify-poc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "release": "commit-and-tag-version"
+    "release": "commit-and-tag-version",
+    "dry_release": "commit-and-tag-version -- --dry-run"
   },
   "dependencies": {
     "next": "14.2.3",
