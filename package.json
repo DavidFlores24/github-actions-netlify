@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "release": "commit-and-tag-version",
-    "dry_release": "commit-and-tag-version -- --dry-run"
+    "dry_release": "commit-and-tag-version --dry-run"
   },
   "dependencies": {
     "next": "14.2.3",
