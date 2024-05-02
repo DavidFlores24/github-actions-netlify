@@ -33,8 +33,8 @@ export default function Home() {
           className={styles.logo}
           src="https://yt3.googleusercontent.com/9rom56gH0XfiMbRiKKtinNI4e9Az4gLyGKNl1segz8iOIgq5xaOWRqKBYj4TvbbnoxQ0vbqw=s900-c-k-c0x00ffffff-no-rj"
           alt="Audiostack"
-          width={180}
-          height={37}
+          width={200}
+          height={200}
           priority
         />
       </div>
