@@ -31,8 +31,8 @@ export default function Home() {
       <div className={styles.center}>
         <Image
           className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
+          src="https://yt3.googleusercontent.com/9rom56gH0XfiMbRiKKtinNI4e9Az4gLyGKNl1segz8iOIgq5xaOWRqKBYj4TvbbnoxQ0vbqw=s900-c-k-c0x00ffffff-no-rj"
+          alt="Audiostack"
           width={180}
           height={37}
           priority
