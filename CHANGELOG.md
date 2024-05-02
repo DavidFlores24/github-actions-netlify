@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.7](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.1.6...v0.1.7) (2024-05-02)
+
+
+### Features
+
+* homepage branding ([6562cd1](https://github.com/DavidFlores24/github-actions-netlify/commit/6562cd1e4bfd38614b8b64f4bcbb0b9111151f27))
+
+
+### Bug Fixes
+
+* correct image sizing ([d3629ad](https://github.com/DavidFlores24/github-actions-netlify/commit/d3629ad6e27d42d9f170aa9875c0cce562f0fb5f))
+
 ## [0.1.6](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.1.5...v0.1.6) (2024-05-01)
 
 ## [0.1.5](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.1.4...v0.1.5) (2024-05-01)
