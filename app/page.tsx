@@ -49,7 +49,7 @@ export default function Home() {
           <h2>
             Hello I am David Flores
           </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
+          <p>CHANGE</p>
         </a>
 
         <a
