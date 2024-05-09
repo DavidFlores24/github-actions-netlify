@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Deploy to Netlify
           command: |
-            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
+            ./node_modules/.bin/netlify deploy --build --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
       - save_cache:
           key: netlify-json-{{ .Branch }}
           paths:
