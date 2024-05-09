@@ -112,7 +112,10 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - create_env_file
+      - build:
+          requires:
+            - create_env_file
       - deploy:
           requires:
             - build
