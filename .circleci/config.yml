@@ -59,7 +59,11 @@ jobs:
       - image: cimg/node:18.17.0
     steps:
       - run:
-          command: sh ./scripts/createEnvFile.sh
+          command: |
+            echo -e "\nCreating env file based on CircleCI variables" \
+            touch .env \
+            echo "NETLIFY_API_TOKEN: '${NETLIFY_API_TOKEN}'," > .env \
+            echo "Successfully created env file"
 
 #  comment-pr:
 #    docker:
