@@ -59,7 +59,7 @@ jobs:
       - image: cimg/node:18.17.0
     steps:
       - run:
-          command: sh scripts/createEnvFile.sh
+          command: sh ./scripts/createEnvFile.sh
 
 #  comment-pr:
 #    docker:
