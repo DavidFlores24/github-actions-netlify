@@ -1,0 +1,7 @@
+[[plugins]]
+package = "@netlify/plugin-sitemap"
+  [plugins.inputs]
+  buildDir="build"
+  changefreq = "daily"
+  priority = 0.7
+  filename = "sitemap.xml"
