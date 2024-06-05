@@ -47,7 +47,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2>
-            Hello I am David Flores
+            Hello I am David Flores Flores
           </h2>
           <p>CHANGE</p>
         </a>
