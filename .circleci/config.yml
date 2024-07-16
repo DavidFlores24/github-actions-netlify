@@ -48,7 +48,9 @@ jobs:
       - run:
           name: Deploy to Netlify
           command: |
-            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
+            ALIAS=$(git rev-parse --abbrev-ref HEAD)
+            echo $ALIAS
+            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json --alias $ALIAS
 
   #            sudo apt-get install jq
   #            NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' ./output.json)
