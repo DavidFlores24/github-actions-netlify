@@ -13,14 +13,19 @@ prod_filters: &prod_filters
     branches:
       ignore: /.*/
 
+commands:
+  step_defaults:
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: pnpm install
 jobs:
   build:
     docker:
       - image: cimg/node:18.17.0
     steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - step_defaults
       - run:
           name: Install Dependencies
           command: npm install
@@ -95,10 +100,7 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - deploy
 
   build-deploy-prod:
     jobs:
