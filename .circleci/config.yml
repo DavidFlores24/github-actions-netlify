@@ -29,8 +29,6 @@ commands:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "pnpm-lock.yaml" }}-{{ .Branch }}
-      - restore_cache:
-          key: env-{{ .Branch }}
       - run:
           name: Install
           command: pnpm install   # Running this here even if it is a dependency on all workflows to ensure things are run correctly
