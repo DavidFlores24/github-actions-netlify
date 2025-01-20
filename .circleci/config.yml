@@ -2,108 +2,79 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-#orbs:
-#  node: circleci/node@5.2.0
+config_blocks:
+  prod_filters: &prod_filters
+    filters:
+      tags:
+        only:
+          - /^v[0-9]+(\.[0-9]+)*$/
+      branches:
+        ignore: /.*/
 
-prod_filters: &prod_filters
-  filters:
-    tags:
-      only:
-        - /^v.*/
-    branches:
-      ignore: /.*/
+  staging_filters: &staging_filters
+    filters:
+      branches:
+        only: main
 
-jobs:
-  build:
+  config_defaults: &config_defaults
     docker:
-      - image: cimg/node:18.17.0
+      - image: cimg/node:21.7.3
+
+commands:
+  step_defaults:
     steps:
+      - run:
+          name: Install pnpm
+          command: sudo npm install -g pnpm@9
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "pnpm-lock.yaml" }}-{{ .Branch }}
+      - restore_cache:
+          key: env-{{ .Branch }}
       - run:
-          name: Install Dependencies
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-          paths:
-            - ./node_modules
+          name: Install
+          command: pnpm install   # Running this here even if it is a dependency on all workflows to ensure things are run correctly
+
+jobs:
+  build_branch:
+    <<: *config_defaults
+    steps:
+      - step_defaults
       - run:
-          name: Build
-          command: npm run build
+          name: Deploy
+          command: |
+            ./node_modules/.bin/netlify deploy --build --dir=build --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN
       - save_cache:
-          key: app-build-cache-{{ .Branch }}
+          key: platform-build-cache-{{ .Branch }}
           paths:
             - ./build
 
-  deploy:
-    docker:
-      - image: cimg/node:18.17.0
+  build_prod:
+    <<: *config_defaults
     steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: app-build-cache-{{ .Branch }}
+      - step_defaults
       - run:
-          name: Deploy to Netlify
-          command: |
-            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --json > output.json
-
-  #            sudo apt-get install jq
-  #            NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' ./output.json)
-  #            echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
-  #
-  #      - run:
-  #          name: Comment Deploy URL
-  #          command: |
-  #            sudo apt-get install jq
-  #
-  #            pr_response=$(curl --location --request GET "https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls?head=$CIRCLE_PROJECT_USERNAME:$CIRCLE_BRANCH&state=open" \
-  #            -u $GH_USER:$GH_TOKEN)
-  #
-  #            if [ $(echo $pr_response | jq length) -eq 0 ]; then
-  #              echo "No PR found to update"
-  #            else
-  #              pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
-  #            fi
-  #
-  #            curl --location --request POST "$pr_comment_url" \
-  #            -u $GH_USER:$GH_TOKEN \
-  #            --header 'Content-Type: application/json' \
-  #            --data-raw '{
-  #             "body": $NETLIFY_PREVIEW_URL
-  #            }'
-
-  deploy_prod:
-    docker:
-      - image: cimg/node:18.17.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: app-build-cache-{{ .Branch }}
-      - run:
-          name: Deploy to Netlify
-          command: |
-            ./node_modules/.bin/netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN --dir=build --prod
+          name: Build and Deploy
+          command: ./node_modules/.bin/netlify deploy --build --dir=build --site $NETLIFY_SITE_ID --prod
+      - save_cache:
+          key: platform-build-cache-{{ .Branch }}
+          paths:
+            - ./build
 
 workflows:
   version: 2
-  build-deploy:
+  branch:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - build_branch:
+          name: Build Branch
 
-  build-deploy-prod:
+  prod:
     jobs:
-      - build:
-          <<: *prod_filters
-
-      - deploy_prod:
-          requires:
-            - build
-          <<: *prod_filters
+      - build_prod:
+          name: Build Prod
+          filters:
+            tags:
+              only:
+                - /^v[0-9]+(\.[0-9]+)*$/
+            branches:
+              ignore: /.*/
