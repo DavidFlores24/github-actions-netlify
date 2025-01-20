@@ -55,7 +55,7 @@ jobs:
       - step_defaults
       - run:
           name: Build and Deploy
-          command: ./node_modules/.bin/netlify deploy --build --dir=build --site $NETLIFY_SITE_ID --prod
+          command: ./node_modules/.bin/netlify deploy --build --dir=build --site $NETLIFY_SITE_ID --prod --auth $NETLIFY_API_TOKEN
       - save_cache:
           key: platform-build-cache-{{ .Branch }}
           paths:
