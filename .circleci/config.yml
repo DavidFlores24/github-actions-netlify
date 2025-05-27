@@ -47,6 +47,33 @@ jobs:
           paths:
             - ./build
 
+  build_staging:
+    <<: *config_defaults
+    steps:
+      - step_defaults
+      - run:
+          name: Deploy Staging
+          command: |
+            ./node_modules/.bin/netlify deploy --build --dir=build --site $NETLIFY_SITE_ID --auth $NETLIFY_API_TOKEN
+      - save_cache:
+          key: platform-build-cache-{{ .Branch }}
+          paths:
+            - ./build
+
+  tag_release:
+    <<: *config_defaults
+    steps:
+      - step_defaults
+      - run:
+          name: Add GitHub to SSH
+          command: ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:Bp5aw4/oi7aVAS2YbucqiRyPZDOTIzM8CFJvHqIgqhM"
+      - run:
+          name: Tag Release
+          command: bash scripts/makeRelease.sh
+
   build_prod:
     <<: *config_defaults
     steps:
@@ -65,6 +92,21 @@ workflows:
     jobs:
       - build_branch:
           name: Build Branch
+
+  staging:
+    jobs:
+      - build_staging:
+          name: Build Staging
+          <<: *staging_filters
+      - make_release:
+          name: Make Release
+          type: approval
+          requires:
+            - Build Staging
+      - tag_release:
+          name: Tag Release
+          requires:
+            - Make Release
 
   prod:
     jobs:
