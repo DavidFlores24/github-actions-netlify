@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.10](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.1.9...v0.1.10) (2025-05-29)
+
+
+### Features
+
+* change homepage ([9eb2c4c](https://github.com/DavidFlores24/github-actions-netlify/commit/9eb2c4c9eabe44839e2ef6434577658d0ad55e54))
+
 ## [0.1.9](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.1.8...v0.1.9) (2025-05-29)
 
 ## [0.1.8](https://github.com/DavidFlores24/github-actions-netlify/compare/v0.2.1...v0.1.8) (2025-01-20)
