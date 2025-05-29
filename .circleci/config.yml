@@ -71,6 +71,11 @@ jobs:
           fingerprints:
             - "SHA256:Bp5aw4/oi7aVAS2YbucqiRyPZDOTIzM8CFJvHqIgqhM"
       - run:
+          name: Create Identity
+          command: |
+            git config --global user.email "circleci@audiostack.com"
+            git config --global user.name "CircleCI"
+      - run:
           name: Tag Release
           command: bash scripts/makeRelease.sh
 
